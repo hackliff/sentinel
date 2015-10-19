@@ -1,0 +1,22 @@
+{
+	"ArtifactsDest": "./_build",
+	"Tasks": [
+		"default",
+		"publish-github"
+	],
+	"Arch": "386,amd64",
+	"BuildConstraints": "linux,darwin,windows",
+	"PackageVersion": "0.1.3",
+	"TaskSettings": {
+		"bintray": {
+			"package": "sentinel",
+			"repository": "hivetech",
+			"subject": "hackliff"
+		},
+		"publish-github": {
+			"owner": "hackliff",
+			"repository": "sentinel"
+		}
+	},
+	"ConfigVersion": "0.9"
+}

@@ -1,0 +1,6 @@
+site_name: Sentinel Documentation
+pages:
+  - Home: index.md
+  - Downloads: downloads.md
+theme: flatly
+repo_url: https://github.com/hackliff/sentinel

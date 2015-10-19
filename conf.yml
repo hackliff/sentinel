@@ -1,0 +1,12 @@
+serf:
+  bindAddr: 0.0.0.0
+
+agent:
+  hello: world
+
+sentinels:
+  - name: hawkeye
+    sensor: ping endpoint=http://hawkeye.appturbo.net/ping
+    trigger: clock interval=1m
+
+# TODO statsd

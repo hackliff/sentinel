@@ -2,7 +2,7 @@ package triggers
 
 import (
 	"github.com/azer/logger"
-	"github.com/hackliff/sentinel-factory/plugins/sensors"
+	"github.com/hackliff/sentinel/plugins/sensors"
 )
 
 var log = logger.New("sentinel.trigger")

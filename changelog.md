@@ -9,6 +9,7 @@ follows [SemVer](http://semver.org/).
 ## [0.2.0] - 2015-10-19
 ### Changed
 - full re-write on top of serf project
+- version.go with values filled by compiler (cf Makefile)
 
 ---
 

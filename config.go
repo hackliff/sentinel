@@ -76,8 +76,9 @@ func LoadConfiguration(opts *Options) (*Config, error) {
 	log.Info("loading sentinels configuration")
 	// TODO loop over conf.List("sentinels")
 	hawkeyeConf := SentinelConfig{
-		Name:    "hawkeye",
-		Sensor:  parsePluginConfig("ping endpoint=http://google.fr"),
+		Name: "hawkeye",
+		//Sensor:  parsePluginConfig("ping endpoint=http://wzbrzbzbrzb.fr"),
+		Sensor:  parsePluginConfig("ping endpoint=whatever.gh"),
 		Trigger: parsePluginConfig("clock interval=10s"),
 	}
 

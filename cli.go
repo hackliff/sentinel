@@ -8,12 +8,12 @@ import (
 	"syscall"
 
 	"github.com/azer/logger"
+	"github.com/hashicorp/serf/command"
 	"github.com/hashicorp/serf/command/agent"
 	"github.com/hashicorp/serf/serf"
 
-	// TODO hackliff/sentinel
-	"github.com/hackliff/sentinel-factory/plugins/sensors"
-	"github.com/hackliff/sentinel-factory/plugins/triggers"
+	"github.com/hackliff/sentinel/plugins/sensors"
+	"github.com/hackliff/sentinel/plugins/triggers"
 )
 
 func startAgent(config *agent.Config, serfAgent *agent.Agent) *agent.AgentIPC {
@@ -78,16 +78,24 @@ func RunAgent(conf *Config) int {
 	if ipc == nil {
 		return 1
 	}
+
+	RPC, err := command.RPCClient(conf.Agent.RPCAddr, conf.Agent.RPCAuthKey)
+	if err != nil {
+		log.Error("Error connecting to Serf agent: %s", err)
+		return 1
+	}
+
+	defer RPC.Close()
 	defer ipc.Shutdown()
 	defer serfAgent.Shutdown()
 
+	// NOTE sentinel object is just a container at this point
 	for _, sentinelConf := range conf.Sentinels {
 		//pingSensor := sensor.PingSensor{sentinelConf.Sensor["endpoint"]}
 		// TODO handle errors
 		sensorCreator, _ := sensors.SensorPlugins[sentinelConf.Sensor["plugin"]]
-		pingSensor, _ := sensorCreator(sentinelConf.Sensor)
+		pingSensor, _ := sensorCreator(RPC, sentinelConf.Sensor)
 
-		//clockTrigger_ := triggers.ClockTrigger{}
 		triggerCreator, _ := triggers.TriggerPlugins[sentinelConf.Trigger["plugin"]]
 		clockTrigger_, _ := triggerCreator(sentinelConf.Trigger)
 
@@ -97,9 +105,13 @@ func RunAgent(conf *Config) int {
 			Trigger: clockTrigger_,
 			Sensor:  pingSensor,
 		}
-
-		go sentinel_.Monitor()
-		// TODO defer sentinel_.Shutdown()
+		// TODO handle error
+		if err := sentinel_.Trigger.Schedule(sentinel_.Name, sentinel_.Sensor); err != nil {
+			log.Error("error scheduling sentinel")
+			return 1
+		}
+		go sentinel_.Trigger.Start()
+		defer sentinel_.Trigger.Stop()
 	}
 
 	log.Info("")
@@ -109,8 +121,10 @@ func RunAgent(conf *Config) int {
 	return handleSignals(serfAgent)
 }
 
+// NOTE sentinel_.HandleSignals()
 // TODO graceful leave and SIGHUP support
-func handleSignals(agent *agent.Agent) int {
+//func handleSignals(agent *agent.Agent) int {
+func handleSignals(ag *agent.Agent) int {
 	signalCh := make(chan os.Signal, 4)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 
@@ -119,7 +133,7 @@ func handleSignals(agent *agent.Agent) int {
 	case sig := <-signalCh:
 		log.Info("Caught signal: %v\n", sig)
 		return 1
-	case <-agent.ShutdownCh():
+	case <-ag.ShutdownCh():
 		// Agent is already shutdown!
 		return 0
 	}

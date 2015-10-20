@@ -5,7 +5,7 @@ import (
 	"github.com/rakyll/ticktock"
 	"github.com/rakyll/ticktock/t"
 
-	"github.com/hackliff/sentinel-factory/plugins/sensors"
+	"github.com/hackliff/sentinel/plugins/sensors"
 )
 
 const DEFAULT_INTERVAL string = "1h"

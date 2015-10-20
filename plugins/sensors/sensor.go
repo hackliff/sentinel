@@ -1,6 +1,9 @@
 package sensors
 
-import "github.com/azer/logger"
+import (
+	"github.com/azer/logger"
+	"github.com/hashicorp/serf/client"
+)
 
 var log = logger.New("sentinel.sensor")
 
@@ -19,7 +22,7 @@ type SensorPlugin interface {
 }
 
 // NOTE map[string]interface{} for better type support after casting ?
-type SensorCreator func(map[string]string) (SensorPlugin, error)
+type SensorCreator func(*client.RPCClient, map[string]string) (SensorPlugin, error)
 
 var SensorPlugins = map[string]SensorCreator{}
 

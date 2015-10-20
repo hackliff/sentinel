@@ -8,10 +8,6 @@ import (
 	"github.com/voxelbrain/goptions"
 )
 
-const (
-	VersionNumber = "0.1.0"
-)
-
 var log = logger.New("sentinel")
 
 // Options declares command line flags
@@ -33,7 +29,7 @@ func run(opts *Options) int {
 
 	// Print version number and exit if the version flag is set
 	if opts.Version {
-		fmt.Printf("sentinel v%s\n", VersionNumber)
+		fmt.Printf("sentinel v%s\n", Version)
 		return 0
 	}
 

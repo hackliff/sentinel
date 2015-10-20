@@ -2,11 +2,17 @@ serf:
   bindAddr: 0.0.0.0
 
 agent:
-  hello: world
+  node: {{ hostname }}
 
 sentinels:
   - name: hawkeye
+    # available : ping
     sensor: ping endpoint=http://hawkeye.appturbo.net/ping
+    # available : clock
     trigger: clock interval=1m
+
+  - name: nanny
+    trigger: event on=member-failed
+    action: alert adapter=pushbullet api-key=ebzbzvzcezceczve
 
 # TODO statsd

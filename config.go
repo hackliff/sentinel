@@ -10,16 +10,24 @@ import (
 	"github.com/olebedev/config"
 )
 
+type HeartbeatConf struct {
+	// NOTE create Heartbeat plugin here ?
+	Plugin     string
+	Properties map[string]string
+	Filters    []agent.EventFilter
+}
+
 type SentinelConfig struct {
-	Name    string
-	Sensor  map[string]string
-	Trigger map[string]string
+	Name      string
+	Actuator  map[string]string
+	Heartbeat *HeartbeatConf
+	Adapter   map[string]string
 }
 
 type Config struct {
-	Agent     *agent.Config
-	Serf      *serf.Config
-	Sentinels []SentinelConfig
+	Agent    *agent.Config
+	Serf     *serf.Config
+	Sentinel *SentinelConfig
 }
 
 // grammar: <plugin type>: name key1=value key2=an,array
@@ -48,7 +56,7 @@ func completeAgentConfig() *agent.Config {
 	if config.NodeName == "" {
 		hostname, err := os.Hostname()
 		if err != nil {
-			log.Error("Error determining hostname: %s", err)
+			log.Error("error determining hostname: %s", err)
 			return nil
 		}
 		config.NodeName = hostname
@@ -57,15 +65,14 @@ func completeAgentConfig() *agent.Config {
 	return config
 }
 
-// TODO merge(opts, config)
-func LoadConfiguration(opts *Options) (*Config, error) {
+func LoadConfiguration(confPath string) (*Config, error) {
+	// TODO load config file
 	log.Info("loading configuration file")
-	/*
-	 *conf, err := readConfigFile(opts.Conf)
-	 *if err != nil {
-	 *  return nil, err
-	 *}
-	 */
+	cfg, err := readConfigFile(confPath)
+	if err != nil {
+		return nil, err
+	}
+	log.Info("parsed configuration: %#v", cfg)
 
 	log.Info("loading serf agent configuration")
 	agentConf := completeAgentConfig()
@@ -73,18 +80,34 @@ func LoadConfiguration(opts *Options) (*Config, error) {
 		return nil, fmt.Errorf("failed to load agent configuration")
 	}
 
-	log.Info("loading sentinels configuration")
-	// TODO loop over conf.List("sentinels")
-	hawkeyeConf := SentinelConfig{
+	log.Info("parsing heartbeat configuration")
+	adapterCfg, _ := cfg.String("sentinel.adapter")
+	actuatorCfg, _ := cfg.String("sentinel.actuator")
+	heartbeatCfg, _ := cfg.String("sentinel.heartbeat")
+	//partials := parsePluginConfig("clock interval=10s")
+	//partials := parsePluginConfig("event on=member-join,user:actuator-failed,query")
+	// TODO handle error
+	partials := parsePluginConfig(heartbeatCfg)
+	heartbeatConf_ := &HeartbeatConf{
+		Plugin: partials["plugin"],
+		// NOTE pop out "plugin" and "on" ?
+		Properties: partials,
+		Filters:    agent.ParseEventFilter(partials["on"]),
+	}
+
+	log.Info("loading sentinel configuration")
+	hawkeyeConf := &SentinelConfig{
 		Name: "hawkeye",
-		//Sensor:  parsePluginConfig("ping endpoint=http://wzbrzbzbrzb.fr"),
-		Sensor:  parsePluginConfig("ping endpoint=whatever.gh"),
-		Trigger: parsePluginConfig("clock interval=10s"),
+		//Actuator:  parsePluginConfig("ping endpoint=example.com"),
+		//Adapter: parsePluginConfig("shell level=debug"),
+		Adapter:   parsePluginConfig(adapterCfg),
+		Actuator:  parsePluginConfig(actuatorCfg),
+		Heartbeat: heartbeatConf_,
 	}
 
 	return &Config{
-		Agent:     agentConf,
-		Serf:      serf.DefaultConfig(),
-		Sentinels: []SentinelConfig{hawkeyeConf},
+		Agent:    agentConf,
+		Serf:     serf.DefaultConfig(),
+		Sentinel: hawkeyeConf,
 	}, nil
 }

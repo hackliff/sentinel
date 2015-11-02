@@ -1,4 +1,4 @@
-package sensors
+package actuators
 
 import "testing"
 

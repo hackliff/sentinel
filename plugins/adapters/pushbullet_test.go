@@ -1,7 +1,7 @@
-package radio
+package adapters
 
 import "testing"
 
-func TestPushbulletAdapter_implements(t *testing.T) {
-	var _ Adapter = &PushbulletAdapter{}
+func TestPushbullet(t *testing.T) {
+	var _ Plugin = &Pushbullet{}
 }

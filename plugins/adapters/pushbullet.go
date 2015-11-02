@@ -7,19 +7,31 @@ import (
 	"github.com/xconstruct/go-pushbullet"
 )
 
-type PushbulletRadio struct {
+func init() {
+	log.Info("registering adapter: pushbullet")
+	Add("pushbullet", func(conf map[string]string) (Plugin, error) {
+		// NOTE read it from the environment ?
+		apiKey, ok := conf["api-key"]
+		if !ok {
+			return nil, fmt.Errorf("no api key provided for pushbullet adapter")
+		}
+		return NewPushbullet(apiKey), nil
+	})
+}
+
+type Pushbullet struct {
 	client *pushbullet.Client
 	logger *logger.Logger
 }
 
-func NewPushbulletRadio(apiKey string) *PushbulletRadio {
-	return &PushbulletRadio{
+func NewPushbullet(apiKey string) *Pushbullet {
+	return &Pushbullet{
 		client: pushbullet.New(apiKey),
 		logger: logger.New("sentinel.adapters.pushbullet"),
 	}
 }
 
-func (p *PushbulletRadio) lookupDevice(name string) (*pushbullet.Device, error) {
+func (p *Pushbullet) lookupDevice(name string) (*pushbullet.Device, error) {
 	devs, err := p.client.Devices()
 	if err != nil {
 		return nil, err
@@ -33,7 +45,7 @@ func (p *PushbulletRadio) lookupDevice(name string) (*pushbullet.Device, error) 
 	return nil, fmt.Errorf("device %s not found\n", name)
 }
 
-func (p PushbulletRadio) Send(envelope_ Envelope, message string) error {
+func (p Pushbullet) Send(envelope_ Envelope, message string) error {
 	device, err := p.lookupDevice(envelope_.Recipient)
 	if err != nil {
 		return err

@@ -7,22 +7,21 @@ import (
 	"github.com/hackliff/sentinel/plugins/actuators"
 )
 
-type EventHub struct {
-	Actuator actuators.Plugin
-	Self     serf.Member
-	Filters  []agent.EventFilter
-}
-
 var HEARTBEAT_EVENT serf.Event = serf.UserEvent{
 	Name:     "heartbeat",
 	Payload:  []byte(""),
 	Coalesce: true,
 }
 
+type EventHub struct {
+	Actuator actuators.Plugin
+	Self     serf.Member
+	Filters  []agent.EventFilter
+}
+
 // NOTE Run is currently a way to implement ticktock job runner
-func (h EventHub) Run() error {
+func (h EventHub) Run() {
 	h.HandleEvent(HEARTBEAT_EVENT)
-	return nil
 }
 
 func (h EventHub) HandleEvent(e serf.Event) {

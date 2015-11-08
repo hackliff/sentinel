@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -16,14 +17,26 @@ import (
 func composeEventHub(cfg *config.Config, serfAgent *agent.Agent) (*EventHub, error) {
 	log.Info("composing new sentinel %#v", cfg)
 
-	// setting up common adapter
-	adapterCreator, _ := adapters.Plugins[cfg.Adapter["plugin"]]
-	adapter_, _ := adapterCreator(cfg.Adapter)
+	log.Info("setting up sentinel adapter: %s", cfg.Adapter.Plugin)
+	adapterCreator, ok := adapters.Plugins[cfg.Adapter.Plugin]
+	if !ok {
+		return nil, fmt.Errorf("invalid adapter: %s", cfg.Adapter.Plugin)
+	}
+	adapter_, err := adapterCreator(cfg.Adapter.Opts)
+	if err != nil {
+		return nil, err
+	}
 
 	// setting up common actuator
-	// TODO handle errors
-	actuatorCreator, _ := actuators.Plugins[cfg.Actuator["plugin"]]
-	actuator_, _ := actuatorCreator(adapter_, cfg.Actuator)
+	log.Info("setting up sentinel actuator: %s", cfg.Actuator.Plugin)
+	actuatorCreator, ok := actuators.Plugins[cfg.Actuator.Plugin]
+	if !ok {
+		return nil, fmt.Errorf("invalid actuator: %s", cfg.Actuator.Plugin)
+	}
+	actuator_, err := actuatorCreator(adapter_, cfg.Actuator.Opts)
+	if err != nil {
+		return nil, err
+	}
 
 	return &EventHub{
 		Actuator: actuator_,
@@ -33,36 +46,43 @@ func composeEventHub(cfg *config.Config, serfAgent *agent.Agent) (*EventHub, err
 }
 
 func onAgentReady(serfAgent *agent.Agent, serfConfig *agent.Config, shutdownCh <-chan struct{}) {
+	// search for the path in environment, fallback to default
 	cfgPath, err := config.Path()
 	if err != nil {
-		log.Error("error searching for configuration file: %v", err)
+		log.Error("error searching configuration file: %v", err)
 		return
 	}
 	cfg, err := config.Load(cfgPath)
 	if err != nil {
-		log.Error("loading configuration: %v", err)
+		log.Error("failed to load configuration: %v", err)
 		return
 	}
 
-	hub, _ := composeEventHub(cfg, serfAgent)
+	hub, err := composeEventHub(cfg, serfAgent)
+	if err != nil {
+		log.Error("failed to compose sentinel event hub: %s", err)
+		return
+	}
 
 	if cfg.Heartbeat.Plugin == "event" {
 		log.Info("registering new event handler")
 		serfAgent.RegisterEventHandler(hub)
 	} else {
 		// setting up heartbeat
-		heartbeatCreator, _ := heartbeats.Plugins[cfg.Heartbeat.Plugin]
-		heartbeat_, _ := heartbeatCreator(cfg.Heartbeat.Properties)
+		heartbeatCreator, ok := heartbeats.Plugins[cfg.Heartbeat.Plugin]
+		if !ok {
+			log.Error("invalid heartbeat: %s", cfg.Heartbeat.Plugin)
+			return
+		}
+		heartbeat_, err := heartbeatCreator(cfg.Heartbeat.Opts)
+		if err != nil {
+			log.Error("failed to initialize heartbeat: %s", err)
+			return
+		}
 		defer heartbeat_.Stop()
 
 		log.Info("scheduling new sentinel actuator")
-		if err := heartbeat_.Schedule(cfg.Name, hub); err != nil {
-			log.Info("error scheduling sentinel")
-			return
-		}
-
-		log.Info("activating heartbeat")
-		go heartbeat_.Start()
+		heartbeat_.Schedule(cfg.Name, hub)
 	}
 
 	handleSignals(serfAgent, shutdownCh)

@@ -1,19 +1,11 @@
-# unused
-serf:
-  bindAddr: 0.0.0.0
-
-# unused
-agent:
-  node: dev
-
 sentinel:
   name: hawkeye
   # available : ping, debug
   actuator: debug
-  #sensor: ping endpoint=http://hawkeye.appturbo.net/ping
+  #actuator: ping endpoint=http://hawkeye.appturbo.net/ping
   # available : shell, serf, pushbullet
   adapter: shell
   # available : clock, event
-  heartbeat: event on=member-join,user:sensor-failed,query
+  #heartbeat: event on=member-join,user:sensor-failed,query
   # cf https://www.serfdom.io/docs/agent/event-handlers.html
-  #trigger: clock interval=1m
+  heartbeat: cron interval="@every 5s"

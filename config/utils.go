@@ -8,7 +8,7 @@ import (
 // NOTE maybe fmt.Sprintf("%s.yml", agent.nodename)
 // sentinel will try to read this file if environment variable
 // SENTINEL_CONF_PATH isn't set
-const DEFAULT_CONF_PATH = "./conf.yml"
+const DEFAULT_CONF_PATH = "./sentinel.yml"
 
 func missingFile(filePath string) bool {
 	_, err := os.Stat(filePath)

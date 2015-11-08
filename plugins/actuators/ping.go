@@ -33,24 +33,24 @@ type Ping struct {
 }
 
 func (p Ping) Description() string {
-	return "sensor monitoring ping responses from http endpoint"
+	return "actuator monitoring ping responses from http endpoint"
 }
 
 func (p Ping) SampleConfig() string {
 	return `
 # endpoint to inspect
-sensor: ping endpoint="http://example.com"
+actuator: ping endpoint="http://example.com"
 `
 }
 
 // NOTE should be easier (less boilerplate)
 func (p Ping) notify(pingErr error) error {
 	envelope_ := adapters.Envelope{
-		Title:     "sensor-failed",
+		Title:     "actuator-failed",
 		Recipient: "*",
 	}
 	// TODO proper protocol ?
-	payload := fmt.Sprintf("endpoint=%s sensor=ping err=%s", p.Endpoint, pingErr)
+	payload := fmt.Sprintf("endpoint=%s actuator=ping err=%s", p.Endpoint, pingErr)
 	if err := p.Adapter.Send(envelope_, payload); err != nil {
 		p.logger.Error("Error sending event: %s", err)
 		return err

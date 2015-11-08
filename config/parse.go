@@ -1,26 +1,40 @@
 package config
 
 import (
+	"regexp"
 	"strings"
-
-	"github.com/olebedev/config"
 )
 
-// grammar: <plugin type>: name key1=value key2=an,array
+const PATTERN string = "([a-z0-9]+)=(\"[\\s-:,@a-z0-9]+\")"
+
+type REParser struct {
+	RE *regexp.Regexp
+}
+
+func NewREParser() *REParser {
+	return &REParser{regexp.MustCompile(PATTERN)}
+}
+
+// grammar: <plugin type>: kind key1="value" key2="an,array"
 // NOTE use plugin-defined spec to cast values and validate ?
-func parsePluginConfig(descr string) map[string]string {
+func (p REParser) pluginOpts(spec string) map[string]string {
 	props := make(map[string]string)
-	parts := strings.Split(descr, " ")
-	props["plugin"] = parts[0]
-	for _, part := range parts[1:] {
-		kv := strings.Split(part, "=")
-		props[kv[0]] = kv[1]
+	for _, kvs := range p.RE.FindAllString(spec, -1) {
+		parts := strings.Split(kvs, "=")
+		props[parts[0]] = strings.Trim(parts[1], "\"")
 	}
 
 	return props
 }
 
-// TODO render Go template (ex: {{ hostname }}) or support consul-template ?
-func readConfigFile(confPath string) (*config.Config, error) {
-	return config.ParseYamlFile(confPath)
+func (p REParser) pluginName(spec string) string {
+	parts := strings.Split(spec, " ")
+	return parts[0]
+}
+
+func (p REParser) Parse(spec string) *PluginConfig {
+	return &PluginConfig{
+		Plugin: p.pluginName(spec),
+		Opts:   p.pluginOpts(spec),
+	}
 }

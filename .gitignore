@@ -31,3 +31,4 @@ vendor/
 .DS_Store
 site/
 sentinel
+_dist/

@@ -12,6 +12,7 @@ import (
 func init() {
 	log.Info("registering actuator: debugger")
 	Add("debug", func(adapter_ adapters.Plugin, conf map[string]string) (Plugin, error) {
+
 		return &Debug{
 			Adapter: adapter_,
 			logger:  logger.New("sentinel.plugins.actuators.debug"),
@@ -25,7 +26,7 @@ type Debug struct {
 }
 
 func (d Debug) Description() string {
-	return "actuator printing out incoming events"
+	return "print out incoming events"
 }
 
 func (d Debug) SampleConfig() string {

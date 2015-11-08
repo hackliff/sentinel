@@ -1,0 +1,9 @@
+dependencies:
+  pre:
+    - make dev.install
+
+test:
+  #pre: make lint
+
+  override:
+    - make test

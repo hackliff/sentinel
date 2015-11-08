@@ -8,7 +8,7 @@ until something goes wrong.
 
 <h1 align="center">
   <br>
-  <img width="400" src="sentinels.png">
+  <img width="400" src="sentinels.jpg">
   <br>
   <br>
 </h1>

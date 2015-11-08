@@ -44,8 +44,10 @@ crossbuild: $(SOURCES)
 		-arch="amd64" \
 		-output="$(BUILD_PATH)/$(VERSION)/{{.OS}}-{{.Arch}}/{{.Dir}}" .
 
-release: crossbuild
-	@echo "not implemented yet ..."
+#release: crossbuild
+release:
+	[[ -n "$(COMMENT)" ]] || $(error "WHAT")
+	git tag -a v$(VERSION) -m '$(COMMENT)'
 
 $(BINARY): $(SOURCES)
 	# TODO exclude ./vendor dir

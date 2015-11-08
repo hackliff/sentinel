@@ -1,7 +1,15 @@
 #! /bin/sh
 
+export GO15VENDOREXPERIMENT=1
+
 install_glide() {
-  export GO15VENDOREXPERIMENT=1
+  local dest=$GOPATH/src/github.com/Masterminds/glide
+  git clone ${dest} && cd ${dest}
+  make bootstrap
+  make install
+}
+
+deprecated() {
   local version=${1:-"0.7.0"}
   local platform=${2:-"linux-amd64"}
   local target=glide-${GLIDE_VERSION}-${platform}

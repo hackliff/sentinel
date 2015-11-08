@@ -22,6 +22,8 @@ RUN go get github.com/alecthomas/gometalinter && \
 # A dead simple, no frills Go cross compile tool
 RUN go get github.com/mitchellh/gox
 
+RUN git config --global user.name hackliff
+
 # godoc
 EXPOSE 6060
 

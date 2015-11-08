@@ -5,13 +5,15 @@ PROJECT := $(shell basename $(PWD))
 SOURCES := $(shell find . -path './vendor' -prune -o -type f -name '*.go' -print)
 PACKAGES=$(shell go list ./... | grep -v /vendor/)
 
-GIT_COMMIT=`git rev-parse HEAD`
-GIT_USER=`git config --get user.name`
-GO_PROJECTS="/go/src/github.com/$(GIT_USER)"
+GIT_COMMIT:=`git rev-parse HEAD`
+GIT_USER:=`git config --get user.name`
+GO_PROJECTS:="/go/src/github.com/$(GIT_USER)"
 BUILD_PATH=./_dist
 GO_VERSION:=$(shell go version)
 # ldflags does't support spaces in variables
 CLEAN_GO_VERSION=$(shell echo "${GO_VERSION}" | sed -e 's/[^a-zA-Z0-9]/_/g')
+
+RELEASE_OPTS?=""
 
 # docker-compose based container name
 CONTAINER="$(GIT_USER)/$(PROJECT)"
@@ -42,12 +44,15 @@ crossbuild: $(SOURCES)
 		-ldflags ${LDFLAGS} \
 		-os="linux darwin" \
 		-arch="amd64" \
-		-output="$(BUILD_PATH)/$(VERSION)/{{.OS}}-{{.Arch}}/{{.Dir}}" .
+		-output="$(BUILD_PATH)/$(VERSION)/{{.Dir}}-{{.OS}}-{{.Arch}}" .
 
-#release: crossbuild
-release:
-	[[ -n "$(COMMENT)" ]] || $(error "WHAT")
-	git tag -a v$(VERSION) -m '$(COMMENT)'
+release: crossbuild
+ifndef COMMENT
+	$(error no tag description provided)
+endif
+	git tag -a $(VERSION) -m '$(COMMENT)'
+	git push --tags
+	ghr $(RELEASE_OPTS) v$(VERSION) $(BUILD_PATH)/$(VERSION)/
 
 $(BINARY): $(SOURCES)
 	# TODO exclude ./vendor dir

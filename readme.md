@@ -28,6 +28,19 @@ multiple backends through interfaces.
 The project is just getting started, don't expect anything to work at this
 point but contribution is welcome !
 
+## Deployment
+
+```Sh
+local version=0.2.0
+local platform=darwin-amd64
+
+curl \
+  -ksL \
+  -o /usr/local/bin/sentinel \
+  https://github.com/hackliff/sentinel-rewrite/releases/download/${version}/sentinel-${platform}
+chmod +x /usr/local/bin/sentinel
+```
+
 
 ## [Documentation][doc]
 

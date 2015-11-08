@@ -4,7 +4,9 @@ export GO15VENDOREXPERIMENT=1
 
 install_glide() {
   local dest=$GOPATH/src/github.com/Masterminds/glide
-  git clone ${dest} && cd ${dest}
+  mkdir -p $GOPATH/src/github.com/Masterminds
+  git clone https://github.com/Masterminds/glide $GOPATH/src/github.com/Masterminds/glide
+  cd $GOPATH/src/github.com/Masterminds/glide
   make bootstrap
   make install
 }
@@ -25,8 +27,7 @@ install_tools() {
   go get github.com/alecthomas/gometalinter && \
     gometalinter --install --update
   go get github.com/mitchellh/gox
-  # go get github.com/tcnksm/ghr alternative ?
-  go get github.com/aktau/github-release
+  go get github.com/tcnksm/ghr
 }
 
 install_deps() {

@@ -67,10 +67,12 @@ install.tools:
 	# cross-compilation
 	go get github.com/mitchellh/gox
 	# github release publication
-	go get github.com/tcnksm/ghr
+	# FIXME too damn slow, use releases ?
+	#go get github.com/tcnksm/ghr
 	# code linting
-	go get github.com/alecthomas/gometalinter && \
-		gometalinter --install --update
+	# FIXME make circleci to fail
+	#go get github.com/alecthomas/gometalinter && \
+		#gometalinter --install --update
 
 install.hack: install.tools
 	gom -groups=plugins,hack install
@@ -82,7 +84,7 @@ lint:
 	GO_VENDOR=1 gometalinter --deadline=25s ./...
 
 test:
-	gom test $(shell go list ./... | grep -v /vendor/) $(TESTARGS)
+	gom test $(shell go list ./... | grep -v /_vendor/) $(TESTARGS)
 
 .PHONY: godoc
 godoc:

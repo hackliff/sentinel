@@ -4,7 +4,7 @@ machine:
 
 dependencies:
   pre:
-    - make dev.install
+    - make install.hack
 
 test:
   #pre: make lint

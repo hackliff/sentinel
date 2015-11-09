@@ -1,0 +1,21 @@
+gom 'github.com/hashicorp/serf'
+gom 'github.com/hackliff/serf', :branch => 'feature/sentinel'
+gom 'github.com/azer/logger'
+gom 'github.com/olebedev/config'
+
+group :plugins do
+  # acuators
+  gom 'github.com/levigross/grequests'
+  # adapters
+  gom 'github.com/xconstruct/go-pushbullet'
+  gom 'github.com/bndr/gotabulate'
+  # heartbeats
+  gom 'github.com/bamzi/jobrunner'
+end
+
+group :hack do
+  gom 'github.com/axw/gocov/gocov'
+  gom 'github.com/alecthomas/gometalinter'
+  gom 'github.com/mitchellh/gox'
+  gom 'github.com/tcnksm/ghr'
+end

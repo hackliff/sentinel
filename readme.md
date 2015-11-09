@@ -2,16 +2,22 @@
 
 [![Circle CI](https://circleci.com/gh/hackliff/sentinel.svg?style=svg)](https://circleci.com/gh/hackliff/sentinel)
 
-
-__Sentinels__ are composable bots you can launch to monitor your things, and forget
-until something goes wrong.
-
 <h1 align="center">
   <br>
   <img width="400" src="sentinels.jpg">
   <br>
   <br>
 </h1>
+
+> Only the paranoid will survice
+
+Modern applications are mostly a composition of services [that will eventually fail][chaos].
+
+__Sentinel__ is a framework to monitor and handle distributed infrastructures,
+like modern microservice topologies or complex applications.
+
+__Sentinels__ are composable bots you can launch to monitor your things, and forget
+until something goes wrong.
 
 It is built out of of three components:
 
@@ -27,6 +33,7 @@ multiple backends through interfaces.
 
 The project is just getting started, don't expect anything to work at this
 point but contribution is welcome !
+
 
 ## Deployment
 
@@ -110,3 +117,4 @@ __Sentinel__ is available under the MIT Licence.
 [walker]: http://gowalker.org/github.com/hackliff/sentinel
 [godoc]: http://godoc.org/github.com/hackliff/sentinel
 [doc]: http://hackliff.github.io/sentinel/
+[chaos]: http://techblog.netflix.com/2012/07/chaos-monkey-released-into-wild.html

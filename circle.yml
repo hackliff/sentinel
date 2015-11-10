@@ -1,9 +1,5 @@
-machine:
-  environment:
-    GO15VENDOREXPERIMENT: 1
-
 dependencies:
-  pre:
+  override:
     - make install.hack
 
 test:
@@ -11,3 +7,9 @@ test:
 
   override:
     - make test
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - echo "upload to github releases or bintray"

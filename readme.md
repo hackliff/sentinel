@@ -44,7 +44,7 @@ local platform=darwin-amd64
 curl \
   -ksL \
   -o /usr/local/bin/sentinel \
-  https://github.com/hackliff/sentinel-rewrite/releases/download/${version}/sentinel-${platform}
+  https://github.com/hackliff/sentinel/releases/download/${version}/sentinel-${platform}
 chmod +x /usr/local/bin/sentinel
 ```
 

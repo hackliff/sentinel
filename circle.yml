@@ -12,4 +12,5 @@ deployment:
   production:
     branch: master
     commands:
+      - echo "cross compile"
       - echo "upload to github releases or bintray"

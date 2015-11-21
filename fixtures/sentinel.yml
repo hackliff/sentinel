@@ -1,7 +1,7 @@
 sentinel:
-  name: hawkeye
-  # available : ping, debug
-  actuator: debug
+  name: testing
+  # available : ping, debug, lua
+  actuator: lua script="fixtures/script.lua"
   #actuator: ping endpoint=http://hawkeye.appturbo.net/ping
   # available : shell, serf, pushbullet
   adapter: shell

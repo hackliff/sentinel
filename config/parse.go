@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-const PATTERN string = "([a-z0-9]+)=(\"[\\s-:,@a-z0-9]+\")"
+const PATTERN string = "([a-z0-9]+)=(\"[\\s-:,@./a-z0-9]+\")"
 
 type REParser struct {
 	RE *regexp.Regexp

@@ -1,15 +1,15 @@
 # [Sentinel][releases]
 
+> Only the paranoid will survice
+
 [![Circle CI](https://circleci.com/gh/hackliff/sentinel.svg?style=svg)](https://circleci.com/gh/hackliff/sentinel)
 
 <h1 align="center">
   <br>
-  <img width="400" src="sentinels.jpg">
+  <img width="500" src="sentinels.jpg">
   <br>
   <br>
 </h1>
-
-> Only the paranoid will survice
 
 Modern applications are mostly a composition of services [that will eventually fail][chaos].
 

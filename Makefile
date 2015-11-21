@@ -81,6 +81,7 @@ install:
 	go install -ldflags ${LDFLAGS}
 
 lint:
+	test -z "$(go fmt ./...)"
 	GO_VENDOR=1 gometalinter --deadline=25s ./...
 
 test:

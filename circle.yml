@@ -1,11 +1,13 @@
 machine:
   environment:
-    # temporary hack while the repo is named
+    # temporary hack while the repo is named sentinel-rewrite
     IMPORT_PATH: "github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
 
 dependencies:
-  override:
+  pre:
     - make install.hack
+
+  override:
     - mkdir -p "$GOPATH/src/$IMPORT_PATH"
     - rsync -azC --delete ./ "$GOPATH/src/$IMPORT_PATH/"
 

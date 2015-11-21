@@ -2,6 +2,7 @@ gom 'github.com/hashicorp/serf'
 gom 'github.com/hackliff/serf', :branch => 'feature/sentinel'
 gom 'github.com/azer/logger'
 gom 'github.com/olebedev/config'
+gom 'github.com/yuin/gopher-lua'
 
 group :plugins do
   # acuators

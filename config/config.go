@@ -35,7 +35,7 @@ func Load(confPath string) (*Config, error) {
 	}
 
 	// NOTE use defaults ?
-	log.Info("parsing heartbeat configuration")
+	log.Info("parsing plugins configuration")
 	adapterCfg, err := cfg.String("sentinel.adapter")
 	if err != nil {
 		return nil, err

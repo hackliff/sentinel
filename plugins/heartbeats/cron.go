@@ -3,9 +3,26 @@ package heartbeats
 import (
 	"github.com/azer/logger"
 	"github.com/bamzi/jobrunner"
+	"github.com/hackliff/serf/command/agent"
+	"github.com/hackliff/serf/serf"
 )
 
 const DEFAULT_INTERVAL string = "@every 1h"
+
+// NOTE build this structure for each call, with useful info ?
+var CRON_EVENT serf.Event = serf.UserEvent{
+	Name:     "heartbeat-cron",
+	Payload:  []byte(""),
+	Coalesce: true,
+}
+
+type Job struct {
+	EventHandler agent.EventHandler
+}
+
+func (j Job) Run() {
+	j.EventHandler.HandleEvent(CRON_EVENT)
+}
 
 func init() {
 	log.Info("registering heartbeat: clock")
@@ -26,10 +43,12 @@ type Clock struct {
 	logger   *logger.Logger
 }
 
-func (c Clock) Schedule(name string, job_ Job) {
+func (c Clock) Schedule(name string, eventHandler agent.EventHandler) {
 	log.Info("registering new cron job: %s", name)
+	job := Job{eventHandler}
+
 	jobrunner.Start()
-	jobrunner.Schedule(c.Interval, job_)
+	jobrunner.Schedule(c.Interval, job)
 }
 
 func (c Clock) Stop() {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/azer/logger"
-	"github.com/hashicorp/serf/serf"
+	"github.com/hackliff/serf/serf"
 
 	"github.com/hackliff/sentinel/plugins/adapters"
 )

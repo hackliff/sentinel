@@ -1,7 +1,8 @@
 sentinel:
   name: testing
   # available : ping, debug, lua
-  actuator: lua script="fixtures/script.lua"
+  #actuator: lua script="fixtures/script.lua"
+  actuator: exec script="fixtures/handler.sh"
   #actuator: ping endpoint=http://hawkeye.appturbo.net/ping
   # available : shell, serf, pushbullet
   adapter: shell

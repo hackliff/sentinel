@@ -2,11 +2,13 @@ package config
 
 import (
 	"github.com/azer/logger"
-	"github.com/hashicorp/serf/command/agent"
+	"github.com/hackliff/serf/command/agent"
 	"github.com/olebedev/config"
 )
 
 var log = logger.New("sentinel.config")
+
+const DEFAULT_NAME string = "sentinel"
 
 type PluginConfig struct {
 	Plugin string
@@ -35,6 +37,10 @@ func Load(confPath string) (*Config, error) {
 	}
 
 	// NOTE use defaults ?
+	cfgName, err := cfg.String("sentinel.name")
+	if err != nil {
+		cfgName = DEFAULT_NAME
+	}
 	log.Info("parsing plugins configuration")
 	adapterCfg, err := cfg.String("sentinel.adapter")
 	if err != nil {
@@ -62,7 +68,7 @@ func Load(confPath string) (*Config, error) {
 
 	log.Info("loading sentinel configuration")
 	return &Config{
-		Name:      "hawkeye",
+		Name:      cfgName,
 		Adapter:   parser.Parse(adapterCfg),
 		Actuator:  parser.Parse(actuatorCfg),
 		Heartbeat: heartbeatConf_,

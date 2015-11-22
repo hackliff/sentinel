@@ -1,16 +1,17 @@
-gom 'github.com/hashicorp/serf'
 gom 'github.com/hackliff/serf', :branch => 'feature/sentinel'
 gom 'github.com/azer/logger'
 gom 'github.com/olebedev/config'
-gom 'github.com/yuin/gopher-lua'
 
 group :plugins do
   # acuators
+  gom 'github.com/yuin/gopher-lua'
   gom 'github.com/levigross/grequests'
   # adapters
   gom 'github.com/xconstruct/go-pushbullet'
   gom 'github.com/bndr/gotabulate'
   # heartbeats
+  gom 'github.com/samalba/dockerclient'
+  gom 'github.com/fsouza/go-dockerclient'
   gom 'github.com/bamzi/jobrunner'
 end
 

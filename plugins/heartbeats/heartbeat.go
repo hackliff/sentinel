@@ -2,20 +2,16 @@ package heartbeats
 
 import (
 	"github.com/azer/logger"
+	"github.com/hackliff/serf/command/agent"
 )
 
 var log = logger.New("sentinel.plugins.heartbeats")
-
-type Job interface {
-	//Run() error
-	Run()
-}
 
 // Plugin is the interface to implement report triggers. Those run in
 // their own gorountines, registering sensor plugins and  waiting for signals
 // to execute them.
 type Plugin interface {
-	Schedule(string, Job)
+	Schedule(string, agent.EventHandler)
 	Stop()
 }
 

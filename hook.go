@@ -14,7 +14,8 @@ import (
 	"github.com/hackliff/sentinel/plugins/heartbeats"
 )
 
-func composeEventHub(cfg *config.Config, serfAgent *agent.Agent) (*EventHub, error) {
+//func composeEventHub(cfg *config.Config, serfAgent *agent.Agent) (*EventHub, error) {
+func composeEventHub(cfg *config.Config, serfAgent *agent.Agent) (agent.EventHandler, error) {
 	log.Info("composing new sentinel %#v", cfg)
 
 	log.Info("setting up sentinel adapter: %s", cfg.Adapter.Plugin)
@@ -38,13 +39,14 @@ func composeEventHub(cfg *config.Config, serfAgent *agent.Agent) (*EventHub, err
 		return nil, err
 	}
 
-	return &EventHub{
+	return EventHub{
 		Actuator: actuator_,
 		Self:     serfAgent.Serf().LocalMember(),
 		Filters:  cfg.Heartbeat.Filters,
 	}, nil
 }
 
+// TODO remove serfConif
 func onAgentReady(serfAgent *agent.Agent, serfConfig *agent.Config, shutdownCh <-chan struct{}) {
 	// search for the path in environment, fallback to default
 	cfgPath, err := config.Path()

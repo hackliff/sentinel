@@ -2,8 +2,8 @@ package adapters
 
 import (
 	"github.com/azer/logger"
-	"github.com/hashicorp/serf/client"
-	"github.com/hashicorp/serf/command"
+	"github.com/hackliff/serf/client"
+	"github.com/hackliff/serf/command"
 )
 
 // TODO a generic conf structure shared by plugins ?
